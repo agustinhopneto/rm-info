@@ -1,38 +1,24 @@
-import * as React from "react"
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from "@chakra-ui/react"
-import { ColorModeSwitcher } from "./ColorModeSwitcher"
-import { Logo } from "./Logo"
+import * as React from 'react';
+import '@fontsource/paytone-one';
+import '@fontsource/nunito-sans';
+import { ChakraProvider } from '@chakra-ui/react';
+import { ThemeColorsProvider } from './hooks/themeColors';
 
-export const App = () => (
+import { Navigation } from './components/Navigation';
+import { Container } from './components/Container';
+
+import { Characters } from './pages/Characters';
+import { theme } from './styles/theme';
+
+import './styles/global.css';
+
+export const App: React.FC = () => (
   <ChakraProvider theme={theme}>
-    <Box textAlign="center" fontSize="xl">
-      <Grid minH="100vh" p={3}>
-        <ColorModeSwitcher justifySelf="flex-end" />
-        <VStack spacing={8}>
-          <Logo h="40vmin" pointerEvents="none" />
-          <Text>
-            Edit <Code fontSize="xl">src/App.tsx</Code> and save to reload.
-          </Text>
-          <Link
-            color="teal.500"
-            href="https://chakra-ui.com"
-            fontSize="2xl"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn Chakra
-          </Link>
-        </VStack>
-      </Grid>
-    </Box>
+    <ThemeColorsProvider>
+      <Navigation />
+      <Container>
+        <Characters />
+      </Container>
+    </ThemeColorsProvider>
   </ChakraProvider>
-)
+);
