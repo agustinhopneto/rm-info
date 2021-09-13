@@ -11,9 +11,11 @@ import {
   Paginator,
   Previous,
 } from 'chakra-paginator';
+
 import { useThemeColors } from '../hooks/themeColors';
 import { Character, Meta } from '../utils/contants';
 import { api } from '../apis/api';
+import { MotionBox } from '../components/MotionBox';
 
 const tagColors = {
   Alive: 'green.500',
@@ -69,16 +71,7 @@ export const Characters: React.FC = () => {
       </Heading>
       <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
         {characters.map(character => (
-          <Box
-            key={character.id}
-            bg={shape}
-            p={4}
-            borderRadius="md"
-            display="flex"
-            flexDirection="column"
-            shadow="sm"
-            cursor="pointer"
-          >
+          <MotionBox key={character.id} bg={shape}>
             <Image
               objectFit="cover"
               width="100%"
@@ -123,7 +116,7 @@ export const Characters: React.FC = () => {
                 </Tag>
               </Box>
             </Box>
-          </Box>
+          </MotionBox>
         ))}
       </SimpleGrid>
 
