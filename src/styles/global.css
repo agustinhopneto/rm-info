@@ -1,18 +1,16 @@
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 0.5rem;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0);
+  background: transparent;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
   background: #718096;
+  border-radius: 0.25rem;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #4a5568;
 }

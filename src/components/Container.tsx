@@ -6,14 +6,17 @@ export const Container: React.FC = ({ children }) => {
   const { bodyBackground } = useThemeColors();
   return (
     <Box
+      id="container"
       bg={bodyBackground}
       display="inline-block"
       verticalAlign="top"
-      width={['76%', '80%', '82%', '86%']}
-      p={8}
       height="100vh"
-      ml={['24%', '20%', '18%', '14%']}
       overflow="auto"
+      width={['100%', '100%', '82%', '86%']}
+      ml={['0%', '0%', '18%', '14%']}
+      pt={8}
+      px={4}
+      pb={4}
     >
       {children}
     </Box>

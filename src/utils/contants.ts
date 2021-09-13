@@ -22,6 +22,13 @@ export type Location = {
   created: Date;
 };
 
+export type Meta = {
+  count: number;
+  next: string | null;
+  pages: number;
+  prev: string | null;
+};
+
 export enum CharacterStatus {
   ALIVE = 'Alive',
   DEAD = 'Dead',

@@ -20,7 +20,7 @@ export const Navigation: React.FC = () => {
       bg={navBackground}
       shadow="xl"
     >
-      <Image src={logoImg} alt="Rick and Morty" p={6} />
+      <Image src={logoImg} alt="Rick and Morty" pt={8} px={4} />
 
       <ColorModeSwitcher position="absolute" bottom={4} left={4} />
     </Box>

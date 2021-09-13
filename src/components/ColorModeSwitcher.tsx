@@ -6,12 +6,13 @@ import {
   IconButtonProps,
 } from '@chakra-ui/react';
 import { FaMoon, FaSun } from 'react-icons/fa';
+import { useThemeColors } from '../hooks/themeColors';
 
 type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>;
 
 export const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = props => {
   const { toggleColorMode } = useColorMode();
-  const text = useColorModeValue('dark', 'light');
+  const { themeButton } = useThemeColors();
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
 
   return (
@@ -20,10 +21,10 @@ export const ColorModeSwitcher: React.FC<ColorModeSwitcherProps> = props => {
       fontSize="lg"
       alignSelf="flex-end"
       variant="ghost"
-      color="current"
+      color={themeButton}
       onClick={toggleColorMode}
       icon={<SwitchIcon />}
-      aria-label={`Switch to ${text} mode`}
+      aria-label={`Switch to ${themeButton} mode`}
       {...props}
     />
   );
