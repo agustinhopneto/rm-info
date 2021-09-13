@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { Container } from './Container';
-import { Characters } from '../pages/Characters';
+
 import { useNavigation } from '../hooks/useNavigation';
+import { Routes } from '../routes';
 
 export const AppContent: React.FC = () => {
   const { component } = useNavigation();
@@ -9,7 +11,7 @@ export const AppContent: React.FC = () => {
     <>
       {component}
       <Container>
-        <Characters />
+        <Routes />
       </Container>
     </>
   );

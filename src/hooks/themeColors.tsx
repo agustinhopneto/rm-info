@@ -12,6 +12,9 @@ interface ThemeColorsProps {
   title: string;
   shape: string;
   span: string;
+  linkColor: string;
+  linkBgHover: string;
+  linkColorHover: string;
   paginationText: string;
   paginationBgActive: string;
   paginationTextActive: string;
@@ -31,6 +34,9 @@ const ThemeColorsProvider: React.FC = ({ children }) => {
   const navButtonBgHover = useColorModeValue('cyan.700', 'cyan.300');
   const title = useColorModeValue('cyan.700', 'cyan.100');
   const span = useColorModeValue('gray.400', 'gray.500');
+  const linkColor = useColorModeValue('gray.500', 'gray.400');
+  const linkBgHover = useColorModeValue('gray.100', 'gray.700');
+  const linkColorHover = useColorModeValue('teal.400', 'teal.300');
   const shape = useColorModeValue('white', 'gray.800');
   const paginationText = useColorModeValue('gray.500', 'gray.500');
   const paginationTextActive = useColorModeValue('gray.600', 'gray.300');
@@ -49,6 +55,9 @@ const ThemeColorsProvider: React.FC = ({ children }) => {
         shape,
         title,
         span,
+        linkColor,
+        linkBgHover,
+        linkColorHover,
         paginationText,
         paginationBgActive,
         paginationTextActive,

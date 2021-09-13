@@ -12,8 +12,8 @@ export const Container: React.FC = ({ children }) => {
       verticalAlign="top"
       height="100vh"
       overflow="auto"
-      width={['100%', '100%', '82%', '86%']}
-      ml={['0%', '0%', '18%', '14%']}
+      width={['100%', '100%', '80%', '86%']}
+      ml={['0%', '0%', '20%', '14%']}
       pt={8}
       px={4}
       pb={4}
