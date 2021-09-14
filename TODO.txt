@@ -1,0 +1,3 @@
+-> Empty Component;
+-> Try/Catch nas requisições as chamadas a API;
+-> Clear filters;
