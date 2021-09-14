@@ -1,9 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-
-import { Tag, Text, useDisclosure } from '@chakra-ui/react';
+import {
+  FormControl,
+  FormLabel,
+  IconButton,
+  Input,
+  Select,
+  Tag,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { Box, Heading, SimpleGrid } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
-
 import {
   Container,
   Next,
@@ -11,10 +18,18 @@ import {
   Paginator,
   Previous,
 } from 'chakra-paginator';
+import { SearchIcon } from '@chakra-ui/icons';
+import { useForm } from 'react-hook-form';
 
 import { api } from '../apis/api';
 import { useThemeColors } from '../hooks/themeColors';
-import { Character, Meta } from '../utils/contants';
+import {
+  Character,
+  CharacterGender,
+  CharacterStatus,
+  CharacterFilters,
+  Meta,
+} from '../utils/contants';
 import { MotionBox } from '../components/MotionBox';
 import { DataModal } from '../components/DataModal';
 
@@ -45,20 +60,33 @@ export const Characters: React.FC = () => {
     {} as Character,
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenFilter,
+    onOpen: onOpenFilter,
+    onClose: onCloseFilter,
+  } = useDisclosure();
+  const { register, getValues } = useForm<CharacterFilters>();
 
-  const loadCharacters = useCallback(async () => {
-    const response = await api.get<{ info: Meta; results: Character[] }>(
-      `/character/?page=${page}&limit=5`,
-    );
-
-    setMeta(response.data.info);
-
-    setCharacters(response.data.results);
-  }, [page]);
+  const loadCharacters = useCallback(
+    async (filters?: CharacterFilters) => {
+      const response = await api.get<{ info: Meta; results: Character[] }>(
+        `/character`,
+        {
+          params: {
+            page,
+            ...filters,
+          },
+        },
+      );
+      setMeta(response.data.info);
+      setCharacters(response.data.results);
+    },
+    [page],
+  );
 
   useEffect(() => {
-    loadCharacters();
-  }, [loadCharacters]);
+    loadCharacters(getValues());
+  }, [loadCharacters, getValues]);
 
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
@@ -81,10 +109,26 @@ export const Characters: React.FC = () => {
     [onOpen],
   );
 
+  const handleSubmit = useCallback(() => {
+    setPage(1);
+    loadCharacters(getValues());
+    onCloseFilter();
+  }, [loadCharacters, onCloseFilter, getValues]);
+
   return (
     <>
-      <Heading color={heading} mb={8}>
+      <Heading color={heading} mb={8} display="flex">
         Characters
+        <IconButton
+          ml={6}
+          onClick={onOpenFilter}
+          variant="outline"
+          aria-label="Search database"
+          icon={<SearchIcon />}
+          size="md"
+          color={buttonBg}
+          borderColor={buttonBg}
+        />
       </Heading>
       <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
         {characters.map(character => (
@@ -145,7 +189,7 @@ export const Characters: React.FC = () => {
 
       <Paginator
         pagesQuantity={meta.pages}
-        currentPage={1}
+        currentPage={page}
         onPageChange={currentPage => handlePageChange(currentPage)}
         outerLimit={1}
         innerLimit={1}
@@ -188,7 +232,7 @@ export const Characters: React.FC = () => {
             #{selectedCharacter.id}
           </Tag>
         </Box>
-        <Box borderRadius="md" bg={bodyBackground} p={4}>
+        <Box borderRadius="md" bg={bodyBackground} p={4} mb={3}>
           <Text fontWeight="bold" fontSize="lg" color={title}>
             Species:{' '}
             <Text
@@ -267,6 +311,88 @@ export const Characters: React.FC = () => {
             </Tag>
           </Text>
         </Box>
+      </DataModal>
+
+      <DataModal
+        isOpen={isOpenFilter}
+        onClose={onCloseFilter}
+        title="Filters"
+        actionButtonTitle="Search"
+        actionButton={handleSubmit}
+      >
+        <FormControl mb={4}>
+          <FormLabel mb={0} color={span}>
+            Name
+          </FormLabel>
+          <Input
+            {...register('name')}
+            color={text}
+            _focus={{
+              borderColor: buttonBg,
+            }}
+            type="search"
+          />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel mb={0} color={span}>
+            Species
+          </FormLabel>
+          <Input
+            {...register('species')}
+            color={text}
+            _focus={{
+              borderColor: buttonBg,
+            }}
+            type="search"
+          />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel mb={0} color={span}>
+            Type
+          </FormLabel>
+          <Input
+            {...register('type')}
+            color={text}
+            _focus={{
+              borderColor: buttonBg,
+            }}
+            type="search"
+          />
+        </FormControl>
+        <FormControl mb={4}>
+          <FormLabel mb={0} color={span}>
+            Status
+          </FormLabel>
+          <Select
+            {...register('status')}
+            color={text}
+            placeholder="Select status"
+            _focus={{
+              borderColor: buttonBg,
+            }}
+          >
+            {Object.values(CharacterStatus).map(status => (
+              <option key={status}>{status}</option>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <FormLabel mb={0} color={span}>
+            Gender
+          </FormLabel>
+          <Select
+            {...register('gender')}
+            color={text}
+            placeholder="Select gender"
+            _focus={{
+              borderColor: buttonBg,
+            }}
+          >
+            {Object.values(CharacterGender).map(gender => (
+              <option key={gender}>{gender}</option>
+            ))}
+          </Select>
+        </FormControl>
       </DataModal>
     </>
   );

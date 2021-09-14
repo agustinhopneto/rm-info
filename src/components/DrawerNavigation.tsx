@@ -45,6 +45,7 @@ export const DrawerNavigation: React.FC = () => {
         bg={buttonBg}
         color={buttonColor}
         _hover={{ bg: buttonBgHover }}
+        zIndex={1}
       />
       <Drawer
         isOpen={isOpen}

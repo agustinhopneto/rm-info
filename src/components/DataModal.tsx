@@ -3,6 +3,7 @@ import {
   Button,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -15,6 +16,8 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
+  actionButtonTitle?: string;
+  actionButton?: () => void;
 };
 
 export const DataModal: React.FC<Props> = ({
@@ -22,6 +25,8 @@ export const DataModal: React.FC<Props> = ({
   isOpen,
   onClose,
   title,
+  actionButton,
+  actionButtonTitle,
 }) => {
   const {
     shape,
@@ -37,23 +42,33 @@ export const DataModal: React.FC<Props> = ({
       <ModalContent bg={shape}>
         <ModalHeader color={titleColor} lineHeight={1.15}>
           {title}
+          <ModalCloseButton />
         </ModalHeader>
         <ModalBody>{children}</ModalBody>
 
-        <ModalFooter>
-          <Button
-            color={buttonColor}
-            bg={buttonBg}
-            mr={3}
-            onClick={onClose}
-            _hover={{
-              bg: buttonBgHover,
-            }}
-          >
-            Close
-          </Button>
-        </ModalFooter>
+        {actionButtonTitle && actionButton && (
+          <ModalFooter px={3} pb={5}>
+            <Button
+              color={buttonColor}
+              bg={buttonBg}
+              mr={3}
+              onClick={actionButton}
+              _hover={{
+                bg: buttonBgHover,
+              }}
+            >
+              {actionButtonTitle}
+            </Button>
+          </ModalFooter>
+        )}
       </ModalContent>
     </Modal>
   );
+};
+
+DataModal.defaultProps = {
+  actionButton: () => {
+    //
+  },
+  actionButtonTitle: '',
 };

@@ -53,3 +53,11 @@ export enum CharacterGender {
   GENDERLESS = 'Genderless',
   UNKNOWN = 'unknown',
 }
+
+export type CharacterFilters = {
+  name: string;
+  species: string;
+  type: string;
+  gender: string;
+  status: string;
+};
