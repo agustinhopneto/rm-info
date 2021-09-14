@@ -35,7 +35,9 @@ export const DataModal: React.FC<Props> = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent bg={shape}>
-        <ModalHeader color={titleColor}>{title}</ModalHeader>
+        <ModalHeader color={titleColor} lineHeight={1.15}>
+          {title}
+        </ModalHeader>
         <ModalBody>{children}</ModalBody>
 
         <ModalFooter>

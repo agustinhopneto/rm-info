@@ -27,6 +27,8 @@ const tagColors = {
 export const Characters: React.FC = () => {
   const {
     heading,
+    buttonColor,
+    buttonBg,
     shape,
     title,
     text,
@@ -87,6 +89,7 @@ export const Characters: React.FC = () => {
       <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
         {characters.map(character => (
           <MotionBox
+            position="relative"
             key={character.id}
             bg={shape}
             onClick={() => handleSelectCharacter(character)}
@@ -105,7 +108,7 @@ export const Characters: React.FC = () => {
               flexDirection="column"
               justifyContent="space-between"
             >
-              <Box mb={4}>
+              <Box>
                 <Text
                   color={title}
                   fontWeight="bold"
@@ -113,7 +116,7 @@ export const Characters: React.FC = () => {
                   mb={1}
                   lineHeight={1}
                 >
-                  #{character.id} {character.name}
+                  {character.name}
                 </Text>
                 <Text
                   color={span}
@@ -121,20 +124,21 @@ export const Characters: React.FC = () => {
                   lineHeight={1}
                   fontStyle="italic"
                 >
-                  {character.gender} / {character.species}
-                  {character.type && ` / ${character.type}`}
+                  {character.species} / {character.gender}
                 </Text>
               </Box>
-              <Box>
-                <Tag
-                  bg={tagColors[character.status]}
-                  color="white"
-                  fontWeight="extrabold"
-                >
-                  {character.status}
-                </Tag>
-              </Box>
             </Box>
+            <Tag
+              position="absolute"
+              bg={buttonBg}
+              color={buttonColor}
+              fontWeight="extrabold"
+              top={2}
+              right={2}
+              shadow="md"
+            >
+              #{character.id}
+            </Tag>
           </MotionBox>
         ))}
       </SimpleGrid>
@@ -160,17 +164,30 @@ export const Characters: React.FC = () => {
       <DataModal
         isOpen={isOpen}
         onClose={onClose}
-        title={`#${selectedCharacter.id} ${selectedCharacter.name}`}
+        title={selectedCharacter.name}
       >
-        <Image
-          objectFit="cover"
-          width="100%"
-          borderRadius="md"
-          src={selectedCharacter.image}
-          alt={selectedCharacter.name}
-          mb="4"
-        />
-
+        <Box position="relative">
+          <Image
+            objectFit="cover"
+            width="100%"
+            borderRadius="md"
+            src={selectedCharacter.image}
+            alt={selectedCharacter.name}
+            mb="4"
+          />
+          <Tag
+            position="absolute"
+            bg={buttonBg}
+            color={buttonColor}
+            fontWeight="extrabold"
+            bottom={-2}
+            right={-2}
+            shadow="md"
+            size="lg"
+          >
+            #{selectedCharacter.id}
+          </Tag>
+        </Box>
         <Box borderRadius="md" bg={bodyBackground} p={4}>
           <Text fontWeight="bold" fontSize="lg" color={title}>
             Species:{' '}
