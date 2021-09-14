@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Tag, Text } from '@chakra-ui/react';
+import { Tag, Text, useDisclosure } from '@chakra-ui/react';
 import { Box, Heading, SimpleGrid } from '@chakra-ui/layout';
 import { Image } from '@chakra-ui/image';
 
@@ -12,10 +12,11 @@ import {
   Previous,
 } from 'chakra-paginator';
 
+import { api } from '../apis/api';
 import { useThemeColors } from '../hooks/themeColors';
 import { Character, Meta } from '../utils/contants';
-import { api } from '../apis/api';
 import { MotionBox } from '../components/MotionBox';
+import { DataModal } from '../components/DataModal';
 
 const tagColors = {
   Alive: 'green.500',
@@ -28,18 +29,24 @@ export const Characters: React.FC = () => {
     heading,
     shape,
     title,
+    text,
     span,
     paginationBgActive,
     paginationTextActive,
     paginationText,
+    bodyBackground,
   } = useThemeColors();
   const [page, setPage] = useState(1);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [meta, setMeta] = useState<Meta>({} as Meta);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character>(
+    {} as Character,
+  );
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const loadCharacters = useCallback(async () => {
     const response = await api.get<{ info: Meta; results: Character[] }>(
-      `/character/?page=${page}`,
+      `/character/?page=${page}&limit=5`,
     );
 
     setMeta(response.data.info);
@@ -64,6 +71,14 @@ export const Characters: React.FC = () => {
     }
   }, []);
 
+  const handleSelectCharacter = useCallback(
+    (character: Character) => {
+      setSelectedCharacter(character);
+      onOpen();
+    },
+    [onOpen],
+  );
+
   return (
     <>
       <Heading color={heading} mb={8}>
@@ -71,7 +86,11 @@ export const Characters: React.FC = () => {
       </Heading>
       <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
         {characters.map(character => (
-          <MotionBox key={character.id} bg={shape}>
+          <MotionBox
+            key={character.id}
+            bg={shape}
+            onClick={() => handleSelectCharacter(character)}
+          >
             <Image
               objectFit="cover"
               width="100%"
@@ -94,7 +113,7 @@ export const Characters: React.FC = () => {
                   mb={1}
                   lineHeight={1}
                 >
-                  {character.name}
+                  #{character.id} {character.name}
                 </Text>
                 <Text
                   color={span}
@@ -137,6 +156,101 @@ export const Characters: React.FC = () => {
           <Next color={paginationText}>Next</Next>
         </Container>
       </Paginator>
+
+      <DataModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title={`#${selectedCharacter.id} ${selectedCharacter.name}`}
+      >
+        <Image
+          objectFit="cover"
+          width="100%"
+          borderRadius="md"
+          src={selectedCharacter.image}
+          alt={selectedCharacter.name}
+          mb="4"
+        />
+
+        <Box borderRadius="md" bg={bodyBackground} p={4}>
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Species:{' '}
+            <Text
+              color={text}
+              fontSize="lg"
+              lineHeight={1}
+              display="inline-block"
+              fontWeight="normal"
+            >
+              {selectedCharacter.species}
+            </Text>
+          </Text>
+
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Gender:{' '}
+            <Text
+              color={text}
+              fontSize="lg"
+              lineHeight={1}
+              display="inline-block"
+              fontWeight="normal"
+            >
+              {selectedCharacter.gender}
+            </Text>
+          </Text>
+
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Type:{' '}
+            <Text
+              color={text}
+              fontSize="lg"
+              lineHeight={1}
+              display="inline-block"
+              fontWeight="normal"
+            >
+              {selectedCharacter.type ? selectedCharacter.type : '--'}
+            </Text>
+          </Text>
+
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Origin:{' '}
+            <Text
+              color={text}
+              fontSize="lg"
+              lineHeight={1}
+              display="inline-block"
+              fontWeight="normal"
+            >
+              {selectedCharacter.origin ? selectedCharacter.origin.name : '--'}
+            </Text>
+          </Text>
+
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Location:{' '}
+            <Text
+              color={text}
+              fontSize="lg"
+              lineHeight={1}
+              display="inline-block"
+              fontWeight="normal"
+            >
+              {selectedCharacter.location
+                ? selectedCharacter.location.name
+                : '--'}
+            </Text>
+          </Text>
+
+          <Text fontWeight="bold" fontSize="lg" color={title}>
+            Status:{' '}
+            <Tag
+              bg={tagColors[selectedCharacter.status]}
+              color="white"
+              fontWeight="extrabold"
+            >
+              {selectedCharacter.status}
+            </Tag>
+          </Text>
+        </Box>
+      </DataModal>
     </>
   );
 };

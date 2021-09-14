@@ -25,13 +25,8 @@ import { useNavigation } from '../hooks/useNavigation';
 
 export const DrawerNavigation: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    navBackground,
-    navButtonBg,
-    navButtonBgHover,
-    navButtonColor,
-    heading,
-  } = useThemeColors();
+  const { navBackground, buttonBg, buttonBgHover, buttonColor, heading } =
+    useThemeColors();
   const btnRef = useRef<any>();
   const { linkColor, linkBgHover, linkColorHover } = useThemeColors();
   const { path } = useNavigation();
@@ -47,9 +42,9 @@ export const DrawerNavigation: React.FC = () => {
         right={6}
         shadow="md"
         size="md"
-        bg={navButtonBg}
-        color={navButtonColor}
-        _hover={{ bg: navButtonBgHover }}
+        bg={buttonBg}
+        color={buttonColor}
+        _hover={{ bg: buttonBgHover }}
       />
       <Drawer
         isOpen={isOpen}

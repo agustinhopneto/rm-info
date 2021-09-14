@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 export type Character = {
   id: number;
   name: string;
@@ -5,7 +6,8 @@ export type Character = {
   species: string;
   type: string;
   gender: CharacterGender;
-  origin: Pick<Location, 'name' | 'url'>;
+  origin?: Pick<Location, 'name' | 'url'>;
+  location?: Pick<Location, 'name' | 'url'>;
   image: string;
   episode: string[];
   url: string;
@@ -18,6 +20,16 @@ export type Location = {
   type: string;
   dimension: string;
   residents: string[];
+  url: string;
+  created: Date;
+};
+
+export type Episode = {
+  id: number;
+  name: string;
+  air_date: string;
+  episode: string;
+  characters: string[];
   url: string;
   created: Date;
 };
