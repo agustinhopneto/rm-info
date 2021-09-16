@@ -61,3 +61,9 @@ export type CharacterFilters = {
   gender: string;
   status: string;
 };
+
+export type LocationFilters = {
+  name: string;
+  type: string;
+  dimension: string;
+};
