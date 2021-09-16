@@ -32,6 +32,8 @@ import {
 } from '../utils/contants';
 import { MotionBox } from '../components/MotionBox';
 import { DataModal } from '../components/DataModal';
+import { Empty } from '../components/Empty';
+import { Loading } from '../components/Loading';
 
 const tagColors = {
   Alive: 'green.500',
@@ -54,6 +56,7 @@ export const Characters: React.FC = () => {
     bodyBackground,
   } = useThemeColors();
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [meta, setMeta] = useState<Meta>({} as Meta);
   const [selectedCharacter, setSelectedCharacter] = useState<Character>(
@@ -69,17 +72,24 @@ export const Characters: React.FC = () => {
 
   const loadCharacters = useCallback(
     async (filters?: CharacterFilters) => {
-      const response = await api.get<{ info: Meta; results: Character[] }>(
-        `/character`,
-        {
-          params: {
-            page,
-            ...filters,
+      try {
+        setIsLoading(true);
+        const response = await api.get<{ info: Meta; results: Character[] }>(
+          `/character`,
+          {
+            params: {
+              page,
+              ...filters,
+            },
           },
-        },
-      );
-      setMeta(response.data.info);
-      setCharacters(response.data.results);
+        );
+        setMeta(response.data.info);
+        setCharacters(response.data.results);
+      } catch (err) {
+        setCharacters([]);
+      } finally {
+        setIsLoading(false);
+      }
     },
     [page],
   );
@@ -117,6 +127,7 @@ export const Characters: React.FC = () => {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Heading color={heading} mb={8} display="flex">
         Characters
         <IconButton
@@ -130,80 +141,91 @@ export const Characters: React.FC = () => {
           borderColor={buttonBg}
         />
       </Heading>
-      <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
-        {characters.map(character => (
-          <MotionBox
-            position="relative"
-            key={character.id}
-            bg={shape}
-            onClick={() => handleSelectCharacter(character)}
-          >
-            <Image
-              objectFit="cover"
-              width="100%"
-              borderRadius="md"
-              src={character.image}
-              alt={character.name}
-              mb="2"
-            />
-            <Box
-              display="flex"
-              flex="1"
-              flexDirection="column"
-              justifyContent="space-between"
-            >
-              <Box>
-                <Text
-                  color={title}
-                  fontWeight="bold"
-                  fontSize="lg"
-                  mb={1}
-                  lineHeight={1}
-                >
-                  {character.name}
-                </Text>
-                <Text
-                  color={span}
-                  fontSize="md"
-                  lineHeight={1}
-                  fontStyle="italic"
-                >
-                  {character.species} / {character.gender}
-                </Text>
-              </Box>
-            </Box>
-            <Tag
-              position="absolute"
-              bg={buttonBg}
-              color={buttonColor}
-              fontWeight="extrabold"
-              top={2}
-              right={2}
-              shadow="md"
-            >
-              #{character.id}
-            </Tag>
-          </MotionBox>
-        ))}
-      </SimpleGrid>
 
-      <Paginator
-        pagesQuantity={meta.pages}
-        currentPage={page}
-        onPageChange={currentPage => handlePageChange(currentPage)}
-        outerLimit={1}
-        innerLimit={1}
-        activeStyles={{
-          color: paginationTextActive,
-          background: paginationBgActive,
-        }}
-      >
-        <Container mt={5} justifyContent="center">
-          <Previous color={paginationText}>Previous</Previous>
-          <PageGroup color={paginationText} isInline align="center" mx={2} />
-          <Next color={paginationText}>Next</Next>
-        </Container>
-      </Paginator>
+      {characters.length > 0 ? (
+        <>
+          <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
+            {characters.map(character => (
+              <MotionBox
+                position="relative"
+                key={character.id}
+                bg={shape}
+                onClick={() => handleSelectCharacter(character)}
+              >
+                <Image
+                  objectFit="cover"
+                  width="100%"
+                  borderRadius="md"
+                  src={character.image}
+                  alt={character.name}
+                  mb="2"
+                />
+                <Box
+                  display="flex"
+                  flex="1"
+                  flexDirection="column"
+                  justifyContent="space-between"
+                >
+                  <Box>
+                    <Text
+                      color={title}
+                      fontWeight="bold"
+                      fontSize="lg"
+                      mb={1}
+                      lineHeight={1}
+                    >
+                      {character.name}
+                    </Text>
+                    <Text
+                      color={span}
+                      fontSize="md"
+                      lineHeight={1}
+                      fontStyle="italic"
+                    >
+                      {character.species} / {character.gender}
+                    </Text>
+                  </Box>
+                </Box>
+                <Tag
+                  position="absolute"
+                  bg={buttonBg}
+                  color={buttonColor}
+                  fontWeight="extrabold"
+                  top={2}
+                  right={2}
+                  shadow="md"
+                >
+                  #{character.id}
+                </Tag>
+              </MotionBox>
+            ))}
+          </SimpleGrid>
+          <Paginator
+            pagesQuantity={meta.pages}
+            currentPage={page}
+            onPageChange={currentPage => handlePageChange(currentPage)}
+            outerLimit={1}
+            innerLimit={1}
+            activeStyles={{
+              color: paginationTextActive,
+              background: paginationBgActive,
+            }}
+          >
+            <Container mt={5} justifyContent="center">
+              <Previous color={paginationText}>Previous</Previous>
+              <PageGroup
+                color={paginationText}
+                isInline
+                align="center"
+                mx={2}
+              />
+              <Next color={paginationText}>Next</Next>
+            </Container>
+          </Paginator>
+        </>
+      ) : (
+        <Empty title="Characters not found! :(" />
+      )}
 
       <DataModal
         isOpen={isOpen}

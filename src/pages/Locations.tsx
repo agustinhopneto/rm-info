@@ -1,5 +1,5 @@
-import { Heading } from '@chakra-ui/layout';
 import React from 'react';
+import { Heading } from '@chakra-ui/layout';
 import { useThemeColors } from '../hooks/themeColors';
 
 export const Locations: React.FC = () => {
