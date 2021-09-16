@@ -83,6 +83,7 @@ export const Characters: React.FC = () => {
             },
           },
         );
+
         setMeta(response.data.info);
         setCharacters(response.data.results);
       } catch (err) {
