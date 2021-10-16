@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Box } from '@chakra-ui/layout';
+
 import { useThemeColors } from '../hooks/themeColors';
 
 export const Container: React.FC = ({ children }) => {

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
+
+import { SearchIcon } from '@chakra-ui/icons';
 import { Heading } from '@chakra-ui/layout';
 import { IconButton, useDisclosure } from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons';
 
-import { useThemeColors } from '../hooks/themeColors';
 import { api } from '../apis/api';
+import { useThemeColors } from '../hooks/themeColors';
 import { Location, LocationFilters, Meta } from '../utils/contants';
 
 export const Locations: React.FC = () => {
@@ -24,6 +25,7 @@ export const Locations: React.FC = () => {
           },
         },
       );
+
       setMeta(response.data.info);
       setLocations(response.data.results);
     } catch (err) {

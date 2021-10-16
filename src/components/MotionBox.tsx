@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, BoxProps } from '@chakra-ui/layout';
+
 import { CustomDomComponent, motion } from 'framer-motion';
+
+import { Box, BoxProps } from '@chakra-ui/layout';
 
 type Props = CustomDomComponent<BoxProps>;
 

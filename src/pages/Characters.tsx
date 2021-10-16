@@ -1,16 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  FormControl,
-  FormLabel,
-  IconButton,
-  Input,
-  Select,
-  Tag,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import { Box, Heading, SimpleGrid } from '@chakra-ui/layout';
-import { Image } from '@chakra-ui/image';
+
 import {
   Container,
   Next,
@@ -18,10 +7,36 @@ import {
   Paginator,
   Previous,
 } from 'chakra-paginator';
-import { SearchIcon } from '@chakra-ui/icons';
 import { useForm } from 'react-hook-form';
 
+import { SearchIcon } from '@chakra-ui/icons';
+import { Image } from '@chakra-ui/image';
+import { Box, Heading, SimpleGrid } from '@chakra-ui/layout';
+import {
+  FormControl,
+  FormLabel,
+  IconButton,
+  Input,
+  Select,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Tag,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
+
 import { api } from '../apis/api';
+import { DataModal } from '../components/DataModal';
+import { Empty } from '../components/Empty';
+import { Loading } from '../components/Loading';
+import { MotionBox } from '../components/MotionBox';
 import { useThemeColors } from '../hooks/themeColors';
 import {
   Character,
@@ -29,11 +44,9 @@ import {
   CharacterStatus,
   CharacterFilters,
   Meta,
+  Episode,
 } from '../utils/contants';
-import { MotionBox } from '../components/MotionBox';
-import { DataModal } from '../components/DataModal';
-import { Empty } from '../components/Empty';
-import { Loading } from '../components/Loading';
+import { getIdsFromUrls } from '../utils/functions';
 
 const tagColors = {
   Alive: 'green.500',
@@ -54,11 +67,13 @@ export const Characters: React.FC = () => {
     paginationTextActive,
     paginationText,
     bodyBackground,
+    linkColorHover,
   } = useThemeColors();
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [meta, setMeta] = useState<Meta>({} as Meta);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character>(
     {} as Character,
   );
@@ -95,6 +110,19 @@ export const Characters: React.FC = () => {
     [page],
   );
 
+  const loadEpisodes = useCallback(async (episodesList: string) => {
+    try {
+      setIsLoading(true);
+      const response = await api.get<Episode[]>(`/episode/${episodesList}`);
+
+      setEpisodes(response.data);
+    } catch (err) {
+      setEpisodes([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadCharacters(getValues());
   }, [loadCharacters, getValues]);
@@ -113,11 +141,16 @@ export const Characters: React.FC = () => {
   }, []);
 
   const handleSelectCharacter = useCallback(
-    (character: Character) => {
+    async (character: Character) => {
+      const episodesList = getIdsFromUrls(character.episode);
+
+      await loadEpisodes(episodesList);
+
       setSelectedCharacter(character);
+
       onOpen();
     },
-    [onOpen],
+    [onOpen, loadEpisodes],
   );
 
   const handleSubmit = useCallback(() => {
@@ -233,107 +266,159 @@ export const Characters: React.FC = () => {
         onClose={onClose}
         title={selectedCharacter.name}
       >
-        <Box position="relative">
-          <Image
-            objectFit="cover"
-            width="100%"
-            borderRadius="md"
-            src={selectedCharacter.image}
-            alt={selectedCharacter.name}
-            mb="4"
-          />
-          <Tag
-            position="absolute"
-            bg={buttonBg}
-            color={buttonColor}
-            fontWeight="extrabold"
-            bottom={-2}
-            right={-2}
-            shadow="md"
-            size="lg"
-          >
-            #{selectedCharacter.id}
-          </Tag>
-        </Box>
-        <Box borderRadius="md" bg={bodyBackground} p={4} mb={3}>
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Species:{' '}
-            <Text
-              color={text}
-              fontSize="lg"
-              lineHeight={1}
-              display="inline-block"
-              fontWeight="normal"
+        <Tabs isFitted>
+          <TabList color={span} borderColor={span}>
+            <Tab
+              _selected={{ color: linkColorHover, borderColor: linkColorHover }}
             >
-              {selectedCharacter.species}
-            </Text>
-          </Text>
+              Info
+            </Tab>
+            <Tab
+              _selected={{ color: linkColorHover, borderColor: linkColorHover }}
+            >
+              Episodes
+            </Tab>
+          </TabList>
 
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Gender:{' '}
-            <Text
-              color={text}
-              fontSize="lg"
-              lineHeight={1}
-              display="inline-block"
-              fontWeight="normal"
-            >
-              {selectedCharacter.gender}
-            </Text>
-          </Text>
+          <TabPanels>
+            <TabPanel p={0} mt={4}>
+              <Box position="relative">
+                <Image
+                  objectFit="cover"
+                  width="100%"
+                  borderRadius="md"
+                  src={selectedCharacter.image}
+                  alt={selectedCharacter.name}
+                  mb="4"
+                />
+                <Tag
+                  position="absolute"
+                  bg={buttonBg}
+                  color={buttonColor}
+                  fontWeight="extrabold"
+                  bottom={-2}
+                  right={-2}
+                  shadow="md"
+                  size="lg"
+                >
+                  #{selectedCharacter.id}
+                </Tag>
+              </Box>
+              <Box borderRadius="md" bg={bodyBackground} p={4} mb={3}>
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Species:{' '}
+                  <Text
+                    color={text}
+                    fontSize="lg"
+                    lineHeight={1}
+                    display="inline-block"
+                    fontWeight="normal"
+                  >
+                    {selectedCharacter.species}
+                  </Text>
+                </Text>
 
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Type:{' '}
-            <Text
-              color={text}
-              fontSize="lg"
-              lineHeight={1}
-              display="inline-block"
-              fontWeight="normal"
-            >
-              {selectedCharacter.type ? selectedCharacter.type : '--'}
-            </Text>
-          </Text>
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Gender:{' '}
+                  <Text
+                    color={text}
+                    fontSize="lg"
+                    lineHeight={1}
+                    display="inline-block"
+                    fontWeight="normal"
+                  >
+                    {selectedCharacter.gender}
+                  </Text>
+                </Text>
 
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Origin:{' '}
-            <Text
-              color={text}
-              fontSize="lg"
-              lineHeight={1}
-              display="inline-block"
-              fontWeight="normal"
-            >
-              {selectedCharacter.origin ? selectedCharacter.origin.name : '--'}
-            </Text>
-          </Text>
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Type:{' '}
+                  <Text
+                    color={text}
+                    fontSize="lg"
+                    lineHeight={1}
+                    display="inline-block"
+                    fontWeight="normal"
+                  >
+                    {selectedCharacter.type ? selectedCharacter.type : '--'}
+                  </Text>
+                </Text>
 
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Location:{' '}
-            <Text
-              color={text}
-              fontSize="lg"
-              lineHeight={1}
-              display="inline-block"
-              fontWeight="normal"
-            >
-              {selectedCharacter.location
-                ? selectedCharacter.location.name
-                : '--'}
-            </Text>
-          </Text>
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Origin:{' '}
+                  <Text
+                    color={text}
+                    fontSize="lg"
+                    lineHeight={1}
+                    display="inline-block"
+                    fontWeight="normal"
+                  >
+                    {selectedCharacter.origin
+                      ? selectedCharacter.origin.name
+                      : '--'}
+                  </Text>
+                </Text>
 
-          <Text fontWeight="bold" fontSize="lg" color={title}>
-            Status:{' '}
-            <Tag
-              bg={tagColors[selectedCharacter.status]}
-              color="white"
-              fontWeight="extrabold"
-            >
-              {selectedCharacter.status}
-            </Tag>
-          </Text>
-        </Box>
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Location:{' '}
+                  <Text
+                    color={text}
+                    fontSize="lg"
+                    lineHeight={1}
+                    display="inline-block"
+                    fontWeight="normal"
+                  >
+                    {selectedCharacter.location
+                      ? selectedCharacter.location.name
+                      : '--'}
+                  </Text>
+                </Text>
+
+                <Text fontWeight="bold" fontSize="lg" color={title}>
+                  Status:{' '}
+                  <Tag
+                    bg={tagColors[selectedCharacter.status]}
+                    color="white"
+                    fontWeight="extrabold"
+                  >
+                    {selectedCharacter.status}
+                  </Tag>
+                </Text>
+              </Box>
+            </TabPanel>
+            <TabPanel p={0} mt={4}>
+              {episodes.length > 0 ? (
+                episodes.map(episode => (
+                  <MotionBox p={0}>
+                    <Stat
+                      borderWidth={1}
+                      p={3}
+                      key={episode.id}
+                      mb={2}
+                      borderRadius="md"
+                      borderColor={span}
+                      cursor="pointer"
+                      transition="0.2s"
+                      _hover={{
+                        bg: 'rgba(125, 201, 245, 0.2)',
+                      }}
+                    >
+                      <StatLabel color={title}>{episode.episode}</StatLabel>
+                      <StatNumber color={title} fontSize="lg">
+                        {episode.name}
+                      </StatNumber>
+                      <StatHelpText m={0} color={text}>
+                        {episode.air_date}
+                      </StatHelpText>
+                    </Stat>
+                  </MotionBox>
+                ))
+              ) : (
+                <Empty title="This character hasn't episodes! :(" />
+              )}
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </DataModal>
 
       <DataModal

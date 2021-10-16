@@ -1,14 +1,15 @@
 import React from 'react';
-import { Box, Link } from '@chakra-ui/layout';
-import { Icon, Image } from '@chakra-ui/react';
+
 import { Link as ReactRouter } from 'react-router-dom';
 
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+import { Box, Link } from '@chakra-ui/layout';
+import { Icon, Image } from '@chakra-ui/react';
 
 import logoImg from '../assets/logo.png';
 import { useThemeColors } from '../hooks/themeColors';
-import routes from '../routes/routes';
 import { useNavigation } from '../hooks/useNavigation';
+import routes from '../routes/routes';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
 
 export const Navigation: React.FC = () => {
   const { path } = useNavigation();

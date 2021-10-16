@@ -1,4 +1,5 @@
 import { FiMapPin, FiUser } from 'react-icons/fi';
+
 import { Characters } from '../pages/Characters';
 import { Locations } from '../pages/Locations';
 

@@ -1,16 +1,17 @@
 import * as React from 'react';
+
 import '@fontsource/paytone-one';
 import '@fontsource/nunito-sans';
-import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { ThemeColorsProvider } from './hooks/themeColors';
-import { theme } from './styles/theme';
+import { ChakraProvider } from '@chakra-ui/react';
 
 import { AppContent } from './components/AppContent';
+import { ThemeColorsProvider } from './hooks/themeColors';
+import { NavigationProvider } from './hooks/useNavigation';
+import { theme } from './styles/theme';
 
 import './styles/global.css';
-import { NavigationProvider } from './hooks/useNavigation';
 
 export const App: React.FC = () => (
   <BrowserRouter>

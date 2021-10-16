@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Image } from '@chakra-ui/image';
 import { Box, Center, Text } from '@chakra-ui/layout';
 

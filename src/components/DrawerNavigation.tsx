@@ -1,5 +1,9 @@
 import React, { useRef } from 'react';
+
+import { Link as ReactRouter } from 'react-router-dom';
+
 import { useDisclosure } from '@chakra-ui/hooks';
+import { HamburgerIcon, Icon } from '@chakra-ui/icons';
 import {
   IconButton,
   Image,
@@ -13,15 +17,12 @@ import {
   Link,
   Box,
 } from '@chakra-ui/react';
-import { HamburgerIcon, Icon } from '@chakra-ui/icons';
-import { Link as ReactRouter } from 'react-router-dom';
-
-import { useThemeColors } from '../hooks/themeColors';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
 
 import logoImg from '../assets/logo.png';
-import routes from '../routes/routes';
+import { useThemeColors } from '../hooks/themeColors';
 import { useNavigation } from '../hooks/useNavigation';
+import routes from '../routes/routes';
+import { ColorModeSwitcher } from './ColorModeSwitcher';
 
 export const DrawerNavigation: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   Button,
   Modal,
@@ -9,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
+
 import { useThemeColors } from '../hooks/themeColors';
 
 type Props = {
