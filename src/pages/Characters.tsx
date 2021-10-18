@@ -46,7 +46,7 @@ import {
   Meta,
   Episode,
 } from '../utils/contants';
-import { getIdsFromUrls } from '../utils/functions';
+import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
 const tagColors = {
   Alive: 'green.500',
@@ -130,14 +130,7 @@ export const Characters: React.FC = () => {
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
 
-    const container = document.querySelector('#container');
-
-    if (container) {
-      container.scroll({
-        top: 0,
-        behavior: 'smooth',
-      });
-    }
+    scrollToTop();
   }, []);
 
   const handleSelectCharacter = useCallback(
@@ -404,7 +397,12 @@ export const Characters: React.FC = () => {
                       }}
                     >
                       <StatLabel color={title}>{episode.episode}</StatLabel>
-                      <StatNumber color={title} fontSize="lg">
+                      <StatNumber
+                        color={title}
+                        fontSize="lg"
+                        lineHeight={1.2}
+                        mb={1.5}
+                      >
                         {episode.name}
                       </StatNumber>
                       <StatHelpText m={0} color={text}>

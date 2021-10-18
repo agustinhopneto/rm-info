@@ -8,3 +8,14 @@ export const getIdsFromUrls = (urls: string[]): string => {
 
   return ids.join(',');
 };
+
+export const scrollToTop = (): void => {
+  const container = document.querySelector('#container');
+
+  if (container) {
+    container.scroll({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }
+};

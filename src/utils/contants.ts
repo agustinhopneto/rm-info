@@ -62,6 +62,11 @@ export type CharacterFilters = {
   status: string;
 };
 
+export type EpisodeFilters = {
+  name: string;
+  episode: string;
+};
+
 export type LocationFilters = {
   name: string;
   type: string;

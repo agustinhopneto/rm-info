@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import '@fontsource/paytone-one';
-import '@fontsource/nunito-sans';
 import { BrowserRouter } from 'react-router-dom';
 
+import '@fontsource/paytone-one';
+import '@fontsource/nunito-sans';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import { AppContent } from './components/AppContent';
