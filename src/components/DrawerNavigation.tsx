@@ -53,10 +53,9 @@ export const DrawerNavigation: React.FC = () => {
         placement="right"
         onClose={onClose}
         finalFocusRef={btnRef}
-        size="xs"
       >
         <DrawerOverlay />
-        <DrawerContent bg={navBackground}>
+        <DrawerContent bg={navBackground} maxWidth="248px">
           <DrawerCloseButton color={heading} />
           <DrawerHeader>
             <Image src={logoImg} alt="Rick and Morty" mt={8} />

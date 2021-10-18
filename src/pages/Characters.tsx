@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  Container,
-  Next,
-  PageGroup,
-  Paginator,
-  Previous,
-} from 'chakra-paginator';
 import { useForm } from 'react-hook-form';
 
 import { SearchIcon } from '@chakra-ui/icons';
@@ -35,6 +28,7 @@ import {
 import { api } from '../apis/api';
 import { DataModal } from '../components/DataModal';
 import { Empty } from '../components/Empty';
+import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
 import { useThemeColors } from '../hooks/themeColors';
@@ -63,9 +57,6 @@ export const Characters: React.FC = () => {
     title,
     text,
     span,
-    paginationBgActive,
-    paginationTextActive,
-    paginationText,
     bodyBackground,
     linkColorHover,
   } = useThemeColors();
@@ -171,7 +162,7 @@ export const Characters: React.FC = () => {
 
       {characters.length > 0 ? (
         <>
-          <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={4}>
+          <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={3}>
             {characters.map(character => (
               <MotionBox
                 position="relative"
@@ -227,28 +218,11 @@ export const Characters: React.FC = () => {
               </MotionBox>
             ))}
           </SimpleGrid>
-          <Paginator
+          <ListPaginator
             pagesQuantity={meta.pages}
             currentPage={page}
-            onPageChange={currentPage => handlePageChange(currentPage)}
-            outerLimit={1}
-            innerLimit={1}
-            activeStyles={{
-              color: paginationTextActive,
-              background: paginationBgActive,
-            }}
-          >
-            <Container mt={5} justifyContent="center">
-              <Previous color={paginationText}>Previous</Previous>
-              <PageGroup
-                color={paginationText}
-                isInline
-                align="center"
-                mx={2}
-              />
-              <Next color={paginationText}>Next</Next>
-            </Container>
-          </Paginator>
+            onPageChange={handlePageChange}
+          />
         </>
       ) : (
         <Empty title="Characters not found! :(" />
