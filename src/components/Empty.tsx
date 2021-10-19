@@ -14,7 +14,13 @@ export const Empty: React.FC<Props> = ({ title }) => {
     <Box width="100%" p={8}>
       <Center flexDirection="column">
         <Image width="200px" src={sadImg} alt="Sad" mb={4} />
-        <Text fontSize="xl" color="teal.400" fontWeight="bold">
+        <Text
+          fontSize="xl"
+          color="teal.400"
+          fontWeight="bold"
+          lineHeight="1"
+          textAlign="center"
+        >
           {title}
         </Text>
       </Center>
