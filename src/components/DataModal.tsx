@@ -11,7 +11,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 
-import { useThemeColors } from '../hooks/themeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 type Props = {
   children: React.ReactNode;

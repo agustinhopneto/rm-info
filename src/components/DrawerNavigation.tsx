@@ -19,8 +19,8 @@ import {
 } from '@chakra-ui/react';
 
 import logoImg from '../assets/logo.png';
-import { useThemeColors } from '../hooks/themeColors';
 import { useNavigation } from '../hooks/useNavigation';
+import { useThemeColors } from '../hooks/useThemeColors';
 import routes from '../routes/routes';
 import { ColorModeSwitcher } from './ColorModeSwitcher';
 

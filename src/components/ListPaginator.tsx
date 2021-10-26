@@ -10,7 +10,7 @@ import {
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
-import { useThemeColors } from '../hooks/themeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 interface Props {
   pagesQuantity: number;

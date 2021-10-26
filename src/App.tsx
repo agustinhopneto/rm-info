@@ -7,8 +7,8 @@ import '@fontsource/nunito-sans';
 import { ChakraProvider } from '@chakra-ui/react';
 
 import { AppContent } from './components/AppContent';
-import { ThemeColorsProvider } from './hooks/themeColors';
 import { NavigationProvider } from './hooks/useNavigation';
+import { ThemeColorsProvider } from './hooks/useThemeColors';
 import { theme } from './styles/theme';
 
 import './styles/global.css';

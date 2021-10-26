@@ -9,7 +9,7 @@ import {
   IconButtonProps,
 } from '@chakra-ui/react';
 
-import { useThemeColors } from '../hooks/themeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 type ColorModeSwitcherProps = Omit<IconButtonProps, 'aria-label'>;
 

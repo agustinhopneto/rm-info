@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Box } from '@chakra-ui/layout';
 
-import { useThemeColors } from '../hooks/themeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 
 export const Container: React.FC = ({ children }) => {
   const { bodyBackground } = useThemeColors();

@@ -31,7 +31,7 @@ import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
-import { useThemeColors } from '../hooks/themeColors';
+import { useThemeColors } from '../hooks/useThemeColors';
 import {
   Character,
   CharacterGender,
