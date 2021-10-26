@@ -25,20 +25,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { api } from '../apis/api';
 import { DataModal } from '../components/DataModal';
 import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
+import { useFetch } from '../hooks/useFetch';
 import { useThemeColors } from '../hooks/useThemeColors';
 import {
   Character,
   CharacterGender,
   CharacterStatus,
   CharacterFilters,
-  Meta,
-  Episode,
 } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
@@ -60,63 +58,34 @@ export const Characters: React.FC = () => {
     bodyBackground,
     linkColorHover,
   } = useThemeColors();
+
+  const {
+    characters,
+    loadCharacters,
+    charactersMeta,
+    episodesByIds,
+    loadEpisodesByIds,
+    isLoading,
+  } = useFetch();
+
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [meta, setMeta] = useState<Meta>({} as Meta);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [selectedCharacter, setSelectedCharacter] = useState<Character>(
     {} as Character,
   );
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const {
     isOpen: isOpenFilter,
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
   } = useDisclosure();
+
   const { register, getValues } = useForm<CharacterFilters>();
 
-  const loadCharacters = useCallback(
-    async (filters?: CharacterFilters) => {
-      try {
-        setIsLoading(true);
-        const response = await api.get<{ info: Meta; results: Character[] }>(
-          `/character`,
-          {
-            params: {
-              page,
-              ...filters,
-            },
-          },
-        );
-
-        setMeta(response.data.info);
-        setCharacters(response.data.results);
-      } catch (err) {
-        setCharacters([]);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [page],
-  );
-
-  const loadEpisodes = useCallback(async (episodesList: string) => {
-    try {
-      setIsLoading(true);
-      const response = await api.get<Episode[]>(`/episode/${episodesList}`);
-
-      setEpisodes(response.data);
-    } catch (err) {
-      setEpisodes([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    loadCharacters(getValues());
-  }, [loadCharacters, getValues]);
+    loadCharacters(getValues(), page);
+  }, [loadCharacters, getValues, page]);
 
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
@@ -128,13 +97,13 @@ export const Characters: React.FC = () => {
     async (character: Character) => {
       const episodesList = getIdsFromUrls(character.episode);
 
-      await loadEpisodes(episodesList);
+      loadEpisodesByIds(episodesList);
 
       setSelectedCharacter(character);
 
       onOpen();
     },
-    [onOpen, loadEpisodes],
+    [onOpen, loadEpisodesByIds],
   );
 
   const handleSubmit = useCallback(() => {
@@ -219,7 +188,7 @@ export const Characters: React.FC = () => {
             ))}
           </SimpleGrid>
           <ListPaginator
-            pagesQuantity={meta.pages}
+            pagesQuantity={charactersMeta.pages}
             currentPage={page}
             onPageChange={handlePageChange}
           />
@@ -354,8 +323,8 @@ export const Characters: React.FC = () => {
               </Box>
             </TabPanel>
             <TabPanel p={0} mt={4}>
-              {episodes.length > 0 ? (
-                episodes.map(episode => (
+              {episodesByIds.length > 0 ? (
+                episodesByIds.map(episode => (
                   <MotionBox p={0}>
                     <Stat
                       borderWidth={1}

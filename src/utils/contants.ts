@@ -62,6 +62,11 @@ export type CharacterFilters = {
   status: string;
 };
 
+export type CharacterResponse = {
+  info: Meta;
+  results: Character[];
+};
+
 export type EpisodeFilters = {
   name: string;
   episode: string;
