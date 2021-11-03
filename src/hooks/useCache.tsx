@@ -1,24 +1,24 @@
 import React, { createContext, useCallback, useContext } from 'react';
 
-import { CacheKeys } from '../utils/contants';
+import { AppCacheKeys } from '../utils/contants';
 
 interface CacheProps {
-  setCache: <T>(key: CacheKeys, data: T) => void;
-  getCache: <T>(key: CacheKeys) => T | undefined;
+  setCache: <T>(key: string, data: T) => void;
+  getCache: <T>(key: string) => T | undefined;
 }
 
 const CacheContext = createContext<CacheProps>({} as CacheProps);
 
 const CacheProvider: React.FC = ({ children }) => {
-  const setCache = useCallback(<T,>(key: CacheKeys, data: T) => {
-    const keyName = `${CacheKeys.APP}/${key}`;
+  const setCache = useCallback(<T,>(key: string, data: T) => {
+    const keyName = `${AppCacheKeys.APP}/${key}`;
     const dataString = JSON.stringify(data);
 
     localStorage.setItem(keyName, dataString);
   }, []);
 
-  const getCache = useCallback(<T,>(key: CacheKeys): T | undefined => {
-    const keyName = `${CacheKeys.APP}/${key}`;
+  const getCache = useCallback(<T,>(key: string): T | undefined => {
+    const keyName = `${AppCacheKeys.APP}/${key}`;
     return JSON.parse(localStorage.getItem(keyName) as string);
   }, []);
 

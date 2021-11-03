@@ -78,12 +78,6 @@ export type LocationFilters = {
   dimension: string;
 };
 
-export enum CacheKeys {
+export enum AppCacheKeys {
   APP = '@rickandmorty',
-  CHARACTERS = 'characters',
-  CHARACTERS_FILTERS = 'characters-filters',
-  CHARACTERS_PAGE = 'characters-page',
-  CHARACTERS_META = 'characters-meta',
-  EPISODES = 'episodes',
-  LOCATIONS = 'locations',
 }

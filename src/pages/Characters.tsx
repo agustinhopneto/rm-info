@@ -38,7 +38,6 @@ import {
   CharacterGender,
   CharacterStatus,
   CharacterFilters,
-  CacheKeys,
 } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
@@ -73,7 +72,7 @@ export const Characters: React.FC = () => {
   } = useFetch();
 
   const [page, setPage] = useState(() => {
-    const cachedPage = getCache<number>(CacheKeys.CHARACTERS_PAGE);
+    const cachedPage = getCache<number>('characters-page');
 
     if (!cachedPage) {
       return 1;
@@ -95,9 +94,7 @@ export const Characters: React.FC = () => {
   } = useDisclosure();
 
   const defaultFilters = useMemo(() => {
-    const cachedFilters = getCache<CharacterFilters>(
-      CacheKeys.CHARACTERS_FILTERS,
-    );
+    const cachedFilters = getCache<CharacterFilters>('character-filters');
 
     return cachedFilters;
   }, [getCache]);
