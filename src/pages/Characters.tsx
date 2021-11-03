@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -30,6 +30,7 @@ import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
+import { useCache } from '../hooks/useCache';
 import { useFetch } from '../hooks/useFetch';
 import { useThemeColors } from '../hooks/useThemeColors';
 import {
@@ -37,6 +38,7 @@ import {
   CharacterGender,
   CharacterStatus,
   CharacterFilters,
+  CacheKeys,
 } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
@@ -59,6 +61,8 @@ export const Characters: React.FC = () => {
     linkColorHover,
   } = useThemeColors();
 
+  const { getCache } = useCache();
+
   const {
     characters,
     loadCharacters,
@@ -68,7 +72,16 @@ export const Characters: React.FC = () => {
     isLoading,
   } = useFetch();
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(() => {
+    const cachedPage = getCache<number>(CacheKeys.CHARACTERS_PAGE);
+
+    if (!cachedPage) {
+      return 1;
+    }
+
+    return cachedPage;
+  });
+
   const [selectedCharacter, setSelectedCharacter] = useState<Character>(
     {} as Character,
   );
@@ -81,35 +94,41 @@ export const Characters: React.FC = () => {
     onClose: onCloseFilter,
   } = useDisclosure();
 
-  const { register, getValues } = useForm<CharacterFilters>();
+  const defaultFilters = useMemo(() => {
+    const cachedFilters = getCache<CharacterFilters>(
+      CacheKeys.CHARACTERS_FILTERS,
+    );
+
+    return cachedFilters;
+  }, [getCache]);
+
+  const { register, getValues } = useForm<CharacterFilters>({
+    defaultValues: defaultFilters,
+  });
 
   useEffect(() => {
     loadCharacters(getValues(), page);
-  }, [loadCharacters, getValues, page]);
+  }, [loadCharacters, page, getValues]);
 
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
-
     scrollToTop();
   }, []);
 
   const handleSelectCharacter = useCallback(
     async (character: Character) => {
       const episodesList = getIdsFromUrls(character.episode);
-
-      loadEpisodesByIds(episodesList);
-
       setSelectedCharacter(character);
-
+      await loadEpisodesByIds(episodesList);
       onOpen();
     },
     [onOpen, loadEpisodesByIds],
   );
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     setPage(1);
-    loadCharacters(getValues());
     onCloseFilter();
+    await loadCharacters(getValues(), 1);
   }, [loadCharacters, onCloseFilter, getValues]);
 
   return (
