@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -28,96 +28,81 @@ import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
+import { useCache } from '../hooks/useCache';
+import { useFetch } from '../hooks/useFetch';
 import { useThemeColors } from '../hooks/useThemeColors';
-import { api } from '../services/api';
-import { Character, Episode, EpisodeFilters, Meta } from '../utils/contants';
+import { Episode, EpisodeFilters } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
 export const Episodes: React.FC = () => {
   const { heading, buttonBg, shape, title, text, span, linkColorHover } =
     useThemeColors();
-  const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState<Meta>({} as Meta);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
-  const [characters, setCharacters] = useState<Character[]>([]);
+
+  const {
+    episodes,
+    loadEpisodes,
+    episodesMeta,
+    charactersByIds,
+    loadCharactersByIds,
+    isLoading,
+  } = useFetch();
+
+  const { getCache } = useCache();
+
+  const [page, setPage] = useState(() => {
+    const cachedPage = getCache<number>('episode-page');
+
+    if (!cachedPage) {
+      return 1;
+    }
+
+    return cachedPage;
+  });
+
   const [selectedEpisode, setSelectedEpisode] = useState<Episode>(
     {} as Episode,
   );
-  const [isLoading, setIsLoading] = useState(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenFilter,
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
   } = useDisclosure();
-  const { register, getValues } = useForm<EpisodeFilters>();
 
-  const loadEpisodes = useCallback(
-    async (filters?: EpisodeFilters) => {
-      try {
-        setIsLoading(true);
-        const response = await api.get<{ info: Meta; results: Episode[] }>(
-          `/episode`,
-          {
-            params: {
-              page,
-              ...filters,
-            },
-          },
-        );
+  const defaultFilters = useMemo(() => {
+    const cachedFilters = getCache<EpisodeFilters>('episode-filters');
 
-        setMeta(response.data.info);
-        setEpisodes(response.data.results);
-      } catch (err) {
-        setEpisodes([]);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [page],
-  );
+    return cachedFilters;
+  }, [getCache]);
+
+  const { register, getValues } = useForm<EpisodeFilters>({
+    defaultValues: defaultFilters,
+  });
 
   useEffect(() => {
-    loadEpisodes();
-  }, [loadEpisodes]);
+    loadEpisodes(getValues(), page);
+  }, [loadEpisodes, getValues, page]);
 
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
     scrollToTop();
   }, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     setPage(1);
-    loadEpisodes(getValues());
     onCloseFilter();
+    await loadEpisodes(getValues(), 1);
   }, [loadEpisodes, onCloseFilter, getValues]);
-
-  const loadCharacters = useCallback(async (charactersList: string) => {
-    try {
-      setIsLoading(true);
-      const response = await api.get<Character[]>(
-        `/character/${charactersList}`,
-      );
-
-      setCharacters(response.data);
-    } catch (err) {
-      setCharacters([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const handleSelectEpisode = useCallback(
     async (episode: Episode) => {
-      const charactersList = getIdsFromUrls(episode.characters);
-
-      await loadCharacters(charactersList);
-
       setSelectedEpisode(episode);
-
+      const charactersList = getIdsFromUrls(episode.characters);
+      await loadCharactersByIds(charactersList);
       onOpen();
     },
-    [onOpen, loadCharacters],
+    [onOpen, loadCharactersByIds],
   );
 
   return (
@@ -182,7 +167,7 @@ export const Episodes: React.FC = () => {
         )}
       </SimpleGrid>
       <ListPaginator
-        pagesQuantity={meta.pages}
+        pagesQuantity={episodesMeta.pages}
         currentPage={page}
         onPageChange={handlePageChange}
       />
@@ -236,8 +221,8 @@ export const Episodes: React.FC = () => {
 
           <TabPanels>
             <TabPanel p={0} mt={4}>
-              {characters.length > 0 ? (
-                characters.map(character => (
+              {charactersByIds.length > 0 ? (
+                charactersByIds.map(character => (
                   <MotionBox p={0}>
                     <Box
                       borderWidth={1}

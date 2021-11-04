@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -28,96 +28,81 @@ import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
+import { useCache } from '../hooks/useCache';
+import { useFetch } from '../hooks/useFetch';
 import { useThemeColors } from '../hooks/useThemeColors';
-import { api } from '../services/api';
-import { Character, Location, LocationFilters, Meta } from '../utils/contants';
+import { Location, LocationFilters } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
 export const Locations: React.FC = () => {
   const { heading, buttonBg, shape, title, text, span, linkColorHover } =
     useThemeColors();
-  const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState<Meta>({} as Meta);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [characters, setCharacters] = useState<Character[]>([]);
+
+  const {
+    isLoading,
+    loadLocations,
+    loadCharactersByIds,
+    locations,
+    locationsMeta,
+    charactersByIds,
+  } = useFetch();
+
+  const { getCache } = useCache();
+
+  const [page, setPage] = useState(() => {
+    const cachedPage = getCache<number>('location-page');
+
+    if (!cachedPage) {
+      return 1;
+    }
+
+    return cachedPage;
+  });
+
   const [selectedLocation, setSelectedLocation] = useState<Location>(
     {} as Location,
   );
-  const [isLoading, setIsLoading] = useState(false);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenFilter,
     onOpen: onOpenFilter,
     onClose: onCloseFilter,
   } = useDisclosure();
-  const { register, getValues } = useForm<LocationFilters>();
 
-  const loadLocations = useCallback(
-    async (filters?: LocationFilters) => {
-      try {
-        setIsLoading(true);
-        const response = await api.get<{ info: Meta; results: Location[] }>(
-          `/location`,
-          {
-            params: {
-              page,
-              ...filters,
-            },
-          },
-        );
+  const defaultFilters = useMemo(() => {
+    const cachedFilters = getCache<LocationFilters>('location-filters');
 
-        setMeta(response.data.info);
-        setLocations(response.data.results);
-      } catch (err) {
-        setLocations([]);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [page],
-  );
+    return cachedFilters;
+  }, [getCache]);
+
+  const { register, getValues } = useForm<LocationFilters>({
+    defaultValues: defaultFilters,
+  });
 
   useEffect(() => {
-    loadLocations();
-  }, [loadLocations]);
+    loadLocations(getValues(), page);
+  }, [loadLocations, getValues, page]);
 
   const handlePageChange = useCallback((currentPage: number) => {
     setPage(currentPage);
     scrollToTop();
   }, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     setPage(1);
-    loadLocations(getValues());
     onCloseFilter();
+    await loadLocations(getValues(), 1);
   }, [loadLocations, onCloseFilter, getValues]);
-
-  const loadCharacters = useCallback(async (charactersList: string) => {
-    try {
-      setIsLoading(true);
-      const response = await api.get<Character[]>(
-        `/character/${charactersList}`,
-      );
-
-      setCharacters(response.data);
-    } catch (err) {
-      setCharacters([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   const handleSelectedLocation = useCallback(
     async (location: Location) => {
-      const charactersList = getIdsFromUrls(location.residents);
-
-      await loadCharacters(charactersList);
-
       setSelectedLocation(location);
-
+      const charactersList = getIdsFromUrls(location.residents);
+      await loadCharactersByIds(charactersList);
       onOpen();
     },
-    [onOpen, loadCharacters],
+    [onOpen, loadCharactersByIds],
   );
 
   return (
@@ -182,7 +167,7 @@ export const Locations: React.FC = () => {
         )}
       </SimpleGrid>
       <ListPaginator
-        pagesQuantity={meta.pages}
+        pagesQuantity={locationsMeta.pages}
         currentPage={page}
         onPageChange={handlePageChange}
       />
@@ -249,8 +234,8 @@ export const Locations: React.FC = () => {
 
           <TabPanels>
             <TabPanel p={0} mt={4}>
-              {characters.length > 0 ? (
-                characters.map(character => (
+              {charactersByIds.length > 0 ? (
+                charactersByIds.map(character => (
                   <MotionBox p={0}>
                     <Box
                       borderWidth={1}

@@ -72,7 +72,7 @@ export const Characters: React.FC = () => {
   } = useFetch();
 
   const [page, setPage] = useState(() => {
-    const cachedPage = getCache<number>('characters-page');
+    const cachedPage = getCache<number>('character-page');
 
     if (!cachedPage) {
       return 1;

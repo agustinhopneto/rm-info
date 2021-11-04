@@ -4,8 +4,11 @@ import { api } from '../services/api';
 import {
   Character,
   CharacterFilters,
+  Entities,
   Episode,
   EpisodeFilters,
+  Location,
+  LocationFilters,
   Meta,
 } from '../utils/contants';
 import { useCache } from './useCache';
@@ -13,21 +16,34 @@ import { useCache } from './useCache';
 interface FetchProps {
   characters: Character[];
   episodes: Episode[];
+  locations: Location[];
   charactersMeta: Meta;
   episodesMeta: Meta;
+  locationsMeta: Meta;
+  charactersByIds: Character[];
   episodesByIds: Episode[];
+  locationsByIds: Location[];
   isLoading: boolean;
   loadCharacters: (filters?: CharacterFilters, page?: number) => Promise<void>;
   loadEpisodes: (filters?: EpisodeFilters, page?: number) => Promise<void>;
+  loadLocations: (filters?: LocationFilters, page?: number) => Promise<void>;
+  loadCharactersByIds: (charactersList: string) => Promise<void>;
   loadEpisodesByIds: (episodesList: string) => Promise<void>;
+  loadLocationsByIds: (locationsList: string) => Promise<void>;
 }
 
 type LoadDataProps<T, Y> = {
   filters?: Y;
   page?: number;
-  entity: 'character' | 'episode' | 'location';
+  entity: Entities;
   setData: React.Dispatch<React.SetStateAction<T[]>>;
   setMeta: React.Dispatch<React.SetStateAction<Meta>>;
+};
+
+type LoadDataByIdsProps<T> = {
+  ids: string;
+  entity: Entities;
+  setData: React.Dispatch<React.SetStateAction<T[]>>;
 };
 
 const FetchContext = createContext<FetchProps>({} as FetchProps);
@@ -35,9 +51,15 @@ const FetchContext = createContext<FetchProps>({} as FetchProps);
 const FetchProvider: React.FC = ({ children }) => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [charactersMeta, setCharactersMeta] = useState<Meta>({} as Meta);
+  const [charactersByIds, setCharactersByIds] = useState<Character[]>([]);
+
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [episodesMeta, setEpisodesMeta] = useState<Meta>({} as Meta);
   const [episodesByIds, setEpisodesByIds] = useState<Episode[]>([]);
+
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [locationsMeta, setLocationsMeta] = useState<Meta>({} as Meta);
+  const [locationsByIds, setLocationsByIds] = useState<Location[]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -97,12 +119,32 @@ const FetchProvider: React.FC = ({ children }) => {
     [getCache, setCache],
   );
 
+  const loadDataByIds = useCallback(
+    async <T,>({
+      ids,
+      entity,
+      setData,
+    }: LoadDataByIdsProps<T>): Promise<void> => {
+      try {
+        setIsLoading(true);
+        const response = await api.get<T[]>(`/${entity}/${ids}`);
+
+        setData(response.data);
+      } catch (err) {
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
+
   const loadCharacters = useCallback(
     async (filters?: CharacterFilters, page?: number) => {
       await loadData<Character, CharacterFilters>({
         filters,
         page,
-        entity: 'character',
+        entity: Entities.CHARACTER,
         setData: setCharacters,
         setMeta: setCharactersMeta,
       });
@@ -115,7 +157,7 @@ const FetchProvider: React.FC = ({ children }) => {
       await loadData<Episode, EpisodeFilters>({
         filters,
         page,
-        entity: 'episode',
+        entity: Entities.EPISODE,
         setData: setEpisodes,
         setMeta: setEpisodesMeta,
       });
@@ -123,31 +165,71 @@ const FetchProvider: React.FC = ({ children }) => {
     [loadData],
   );
 
-  const loadEpisodesByIds = useCallback(async (episodesList: string) => {
-    try {
-      setIsLoading(true);
-      const response = await api.get<Episode[]>(`/episode/${episodesList}`);
+  const loadLocations = useCallback(
+    async (filters?: LocationFilters, page?: number) => {
+      await loadData<Location, LocationFilters>({
+        filters,
+        page,
+        entity: Entities.LOCATION,
+        setData: setLocations,
+        setMeta: setLocationsMeta,
+      });
+    },
+    [loadData],
+  );
 
-      setEpisodesByIds(response.data);
-    } catch (err) {
-      setEpisodesByIds([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const loadCharactersByIds = useCallback(
+    async (charactersList: string): Promise<void> => {
+      await loadDataByIds({
+        ids: charactersList,
+        entity: Entities.CHARACTER,
+        setData: setCharactersByIds,
+      });
+    },
+    [loadDataByIds],
+  );
+
+  const loadEpisodesByIds = useCallback(
+    async (episodesList: string): Promise<void> => {
+      await loadDataByIds({
+        ids: episodesList,
+        entity: Entities.EPISODE,
+        setData: setEpisodesByIds,
+      });
+    },
+    [loadDataByIds],
+  );
+
+  const loadLocationsByIds = useCallback(
+    async (locationsList: string): Promise<void> => {
+      await loadDataByIds({
+        ids: locationsList,
+        entity: Entities.LOCATION,
+        setData: setLocationsByIds,
+      });
+    },
+    [loadDataByIds],
+  );
 
   return (
     <FetchContext.Provider
       value={{
         characters,
         episodes,
+        locations,
         charactersMeta,
         episodesMeta,
+        locationsMeta,
+        charactersByIds,
         episodesByIds,
+        locationsByIds,
         isLoading,
         loadCharacters,
         loadEpisodes,
+        loadLocations,
+        loadCharactersByIds,
         loadEpisodesByIds,
+        loadLocationsByIds,
       }}
     >
       {children}
