@@ -23,13 +23,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { api } from '../apis/api';
 import { DataModal } from '../components/DataModal';
 import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
 import { Loading } from '../components/Loading';
 import { MotionBox } from '../components/MotionBox';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { api } from '../services/api';
 import { Character, Episode, EpisodeFilters, Meta } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
