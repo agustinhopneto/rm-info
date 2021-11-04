@@ -138,10 +138,18 @@ export const Locations: React.FC = () => {
       </Heading>
       <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
         {locations.length > 0 ? (
-          locations.map(location => (
-            <MotionBox p={0}>
+          locations.map((location, index) => (
+            <MotionBox
+              p={0}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.1 * index + 0.75 },
+              }}
+              style={{ opacity: 0, y: 20 }}
+              onClick={() => handleSelectedLocation(location)}
+            >
               <Stat
-                onClick={() => handleSelectedLocation(location)}
                 borderWidth={1}
                 p={3}
                 border={0}

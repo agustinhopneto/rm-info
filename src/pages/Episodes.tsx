@@ -138,10 +138,18 @@ export const Episodes: React.FC = () => {
       </Heading>
       <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
         {episodes.length > 0 ? (
-          episodes.map(episode => (
-            <MotionBox p={0}>
+          episodes.map((episode, index) => (
+            <MotionBox
+              p={0}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.1 * index + 0.75 },
+              }}
+              style={{ opacity: 0, y: 20 }}
+              onClick={() => handleSelectEpisode(episode)}
+            >
               <Stat
-                onClick={() => handleSelectEpisode(episode)}
                 borderWidth={1}
                 p={3}
                 border={0}

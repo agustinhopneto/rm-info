@@ -148,11 +148,17 @@ export const Characters: React.FC = () => {
       {characters.length > 0 ? (
         <>
           <SimpleGrid autoColumns="auto" columns={[2, 3, 4, 5, 6]} spacing={3}>
-            {characters.map(character => (
+            {characters.map((character, index) => (
               <MotionBox
                 position="relative"
                 key={character.id}
                 bg={shape}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.1 * index + 0.75 },
+                }}
+                style={{ opacity: 0, y: 20 }}
                 onClick={() => handleSelectCharacter(character)}
               >
                 <Image
