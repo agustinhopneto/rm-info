@@ -121,56 +121,58 @@ export const Locations: React.FC = () => {
           borderColor={buttonBg}
         />
       </Heading>
-      <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
-        {locations.length > 0 ? (
-          locations.map((location, index) => (
-            <MotionBox
-              p={0}
-              animate={{
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.1 * index + 0.75 },
-              }}
-              style={{ opacity: 0, y: 20 }}
-              onClick={() => handleSelectedLocation(location)}
-            >
-              <Stat
-                borderWidth={1}
-                p={3}
-                border={0}
-                bg={shape}
+      {locations.length > 0 ? (
+        <>
+          <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
+            {locations.map((location, index) => (
+              <MotionBox
+                p={0}
                 key={location.id}
-                borderRadius="md"
-                cursor="pointer"
-                transition="0.2s"
-                _hover={{
-                  bg: 'rgba(125, 201, 245, 0.2)',
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.1 * index + 0.75 },
                 }}
+                style={{ opacity: 0, y: 20 }}
+                onClick={() => handleSelectedLocation(location)}
               >
-                <StatLabel color={title}>{location.type}</StatLabel>
-                <StatNumber
-                  color={title}
-                  fontSize="lg"
-                  lineHeight={1.2}
-                  mb={1.5}
+                <Stat
+                  p={3}
+                  border={0}
+                  bg={shape}
+                  borderRadius="md"
+                  cursor="pointer"
+                  transition="0.2s"
+                  _hover={{
+                    bg: 'rgba(125, 201, 245, 0.2)',
+                  }}
                 >
-                  {location.name}
-                </StatNumber>
-                <StatHelpText m={0} color={text}>
-                  {location.dimension}
-                </StatHelpText>
-              </Stat>
-            </MotionBox>
-          ))
-        ) : (
-          <Empty title="Episodes not found! :(" />
-        )}
-      </SimpleGrid>
-      <ListPaginator
-        pagesQuantity={locationsMeta.pages}
-        currentPage={page}
-        onPageChange={handlePageChange}
-      />
+                  <StatLabel color={title}>{location.type}</StatLabel>
+                  <StatNumber
+                    color={title}
+                    fontSize="lg"
+                    lineHeight={1.2}
+                    mb={1.5}
+                  >
+                    {location.name}
+                  </StatNumber>
+                  <StatHelpText m={0} color={text}>
+                    {location.dimension}
+                  </StatHelpText>
+                </Stat>
+              </MotionBox>
+            ))}
+          </SimpleGrid>
+          <ListPaginator
+            pagesQuantity={locationsMeta.pages}
+            currentPage={page}
+            onPageChange={handlePageChange}
+          />
+        </>
+      ) : (
+        <Empty title="Episodes not found! :(" />
+      )}
+
       <DataModal
         isOpen={isOpenFilter}
         onClose={onCloseFilter}
@@ -235,13 +237,21 @@ export const Locations: React.FC = () => {
           <TabPanels>
             <TabPanel p={0} mt={4}>
               {charactersByIds.length > 0 ? (
-                charactersByIds.map(character => (
-                  <MotionBox p={0}>
+                charactersByIds.map((character, index) => (
+                  <MotionBox
+                    p={0}
+                    key={character.id}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.1 * index + 0.75 },
+                    }}
+                    style={{ opacity: 0, y: 20 }}
+                  >
                     <Box
-                      borderWidth={1}
                       p={3}
-                      key={character.id}
                       mb={2}
+                      borderWidth={1}
                       borderRadius="md"
                       borderColor={span}
                       cursor="pointer"

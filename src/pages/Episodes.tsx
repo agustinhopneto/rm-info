@@ -121,56 +121,57 @@ export const Episodes: React.FC = () => {
           borderColor={buttonBg}
         />
       </Heading>
-      <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
-        {episodes.length > 0 ? (
-          episodes.map((episode, index) => (
-            <MotionBox
-              p={0}
-              animate={{
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.1 * index + 0.75 },
-              }}
-              style={{ opacity: 0, y: 20 }}
-              onClick={() => handleSelectEpisode(episode)}
-            >
-              <Stat
-                borderWidth={1}
-                p={3}
-                border={0}
-                bg={shape}
+      {episodes.length > 0 ? (
+        <>
+          <SimpleGrid autoColumns="auto" columns={[1, 2, 2, 3, 4]} spacing={3}>
+            {episodes.map((episode, index) => (
+              <MotionBox
+                p={0}
                 key={episode.id}
-                borderRadius="md"
-                cursor="pointer"
-                transition="0.2s"
-                _hover={{
-                  bg: 'rgba(125, 201, 245, 0.2)',
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.1 * index + 0.75 },
                 }}
+                style={{ opacity: 0, y: 20 }}
+                onClick={() => handleSelectEpisode(episode)}
               >
-                <StatLabel color={title}>{episode.episode}</StatLabel>
-                <StatNumber
-                  color={title}
-                  fontSize="lg"
-                  lineHeight={1.2}
-                  mb={1.5}
+                <Stat
+                  p={3}
+                  border={0}
+                  bg={shape}
+                  borderRadius="md"
+                  cursor="pointer"
+                  transition="0.2s"
+                  _hover={{
+                    bg: 'rgba(125, 201, 245, 0.2)',
+                  }}
                 >
-                  {episode.name}
-                </StatNumber>
-                <StatHelpText m={0} color={text}>
-                  {episode.air_date}
-                </StatHelpText>
-              </Stat>
-            </MotionBox>
-          ))
-        ) : (
-          <Empty title="Episodes not found! :(" />
-        )}
-      </SimpleGrid>
-      <ListPaginator
-        pagesQuantity={episodesMeta.pages}
-        currentPage={page}
-        onPageChange={handlePageChange}
-      />
+                  <StatLabel color={title}>{episode.episode}</StatLabel>
+                  <StatNumber
+                    color={title}
+                    fontSize="lg"
+                    lineHeight={1.2}
+                    mb={1.5}
+                  >
+                    {episode.name}
+                  </StatNumber>
+                  <StatHelpText m={0} color={text}>
+                    {episode.air_date}
+                  </StatHelpText>
+                </Stat>
+              </MotionBox>
+            ))}
+          </SimpleGrid>
+          <ListPaginator
+            pagesQuantity={episodesMeta.pages}
+            currentPage={page}
+            onPageChange={handlePageChange}
+          />
+        </>
+      ) : (
+        <Empty title="Episodes not found! :(" />
+      )}
       <DataModal
         isOpen={isOpenFilter}
         onClose={onCloseFilter}
@@ -222,13 +223,21 @@ export const Episodes: React.FC = () => {
           <TabPanels>
             <TabPanel p={0} mt={4}>
               {charactersByIds.length > 0 ? (
-                charactersByIds.map(character => (
-                  <MotionBox p={0}>
+                charactersByIds.map((character, index) => (
+                  <MotionBox
+                    p={0}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.1 * index + 0.75 },
+                    }}
+                    style={{ opacity: 0, y: 20 }}
+                    key={character.id}
+                  >
                     <Box
-                      borderWidth={1}
                       p={3}
-                      key={character.id}
                       mb={2}
+                      borderWidth={1}
                       borderRadius="md"
                       borderColor={span}
                       cursor="pointer"

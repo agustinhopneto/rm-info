@@ -266,6 +266,7 @@ export const Characters: React.FC = () => {
                 <Text fontWeight="bold" fontSize="lg" color={title}>
                   Species:{' '}
                   <Text
+                    as="span"
                     color={text}
                     fontSize="lg"
                     lineHeight={1}
@@ -279,6 +280,7 @@ export const Characters: React.FC = () => {
                 <Text fontWeight="bold" fontSize="lg" color={title}>
                   Gender:{' '}
                   <Text
+                    as="span"
                     color={text}
                     fontSize="lg"
                     lineHeight={1}
@@ -292,6 +294,7 @@ export const Characters: React.FC = () => {
                 <Text fontWeight="bold" fontSize="lg" color={title}>
                   Type:{' '}
                   <Text
+                    as="span"
                     color={text}
                     fontSize="lg"
                     lineHeight={1}
@@ -305,6 +308,7 @@ export const Characters: React.FC = () => {
                 <Text fontWeight="bold" fontSize="lg" color={title}>
                   Origin:{' '}
                   <Text
+                    as="span"
                     color={text}
                     fontSize="lg"
                     lineHeight={1}
@@ -320,6 +324,7 @@ export const Characters: React.FC = () => {
                 <Text fontWeight="bold" fontSize="lg" color={title}>
                   Location:{' '}
                   <Text
+                    as="span"
                     color={text}
                     fontSize="lg"
                     lineHeight={1}
@@ -346,13 +351,21 @@ export const Characters: React.FC = () => {
             </TabPanel>
             <TabPanel p={0} mt={4}>
               {episodesByIds.length > 0 ? (
-                episodesByIds.map(episode => (
-                  <MotionBox p={0}>
+                episodesByIds.map((episode, index) => (
+                  <MotionBox
+                    p={0}
+                    key={episode.id}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.1 * index + 0.75 },
+                    }}
+                    style={{ opacity: 0, y: 20 }}
+                  >
                     <Stat
-                      borderWidth={1}
                       p={3}
-                      key={episode.id}
                       mb={2}
+                      borderWidth={1}
                       borderRadius="md"
                       borderColor={span}
                       cursor="pointer"
