@@ -48,7 +48,7 @@ type LoadDataByIdsProps<T> = {
 
 const FetchContext = createContext<FetchProps>({} as FetchProps);
 
-const FetchProvider: React.FC = ({ children }) => {
+export const FetchProvider: React.FC = ({ children }) => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [charactersMeta, setCharactersMeta] = useState<Meta>({} as Meta);
   const [charactersByIds, setCharactersByIds] = useState<Character[]>([]);
@@ -237,10 +237,6 @@ const FetchProvider: React.FC = ({ children }) => {
   );
 };
 
-const useFetch = (): FetchProps => {
-  const context = useContext(FetchContext);
-
-  return context;
+export const useFetch = (): FetchProps => {
+  return useContext(FetchContext);
 };
-
-export { FetchProvider, useFetch };

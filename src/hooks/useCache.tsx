@@ -9,7 +9,7 @@ interface CacheProps {
 
 const CacheContext = createContext<CacheProps>({} as CacheProps);
 
-const CacheProvider: React.FC = ({ children }) => {
+export const CacheProvider: React.FC = ({ children }) => {
   const setCache = useCallback(<T,>(key: string, data: T) => {
     const keyName = `${AppCacheKeys.APP}/${key}`;
     const dataString = JSON.stringify(data);
@@ -29,10 +29,6 @@ const CacheProvider: React.FC = ({ children }) => {
   );
 };
 
-const useCache = (): CacheProps => {
-  const context = useContext(CacheContext);
-
-  return context;
+export const useCache = (): CacheProps => {
+  return useContext(CacheContext);
 };
-
-export { CacheProvider, useCache };

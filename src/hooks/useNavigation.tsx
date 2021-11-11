@@ -15,7 +15,7 @@ interface NavigationProps {
 
 const NavigationContext = createContext<NavigationProps>({} as NavigationProps);
 
-const NavigationProvider: React.FC = ({ children }) => {
+export const NavigationProvider: React.FC = ({ children }) => {
   const isMdScreen = useBreakpointValue({
     base: true,
     md: false,
@@ -47,10 +47,6 @@ const NavigationProvider: React.FC = ({ children }) => {
   );
 };
 
-const useNavigation = (): NavigationProps => {
-  const context = useContext(NavigationContext);
-
-  return context;
+export const useNavigation = (): NavigationProps => {
+  return useContext(NavigationContext);
 };
-
-export { NavigationProvider, useNavigation };
