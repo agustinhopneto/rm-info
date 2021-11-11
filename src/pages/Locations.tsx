@@ -131,7 +131,7 @@ export const Locations: React.FC = () => {
                 animate={{
                   opacity: 1,
                   y: 0,
-                  transition: { duration: 0.1 * index + 0.75 },
+                  transition: { duration: 0.1 * index + 0.2 },
                 }}
                 style={{ opacity: 0, y: 20 }}
                 onClick={() => handleSelectedLocation(location)}
@@ -244,7 +244,7 @@ export const Locations: React.FC = () => {
                     animate={{
                       opacity: 1,
                       y: 0,
-                      transition: { duration: 0.1 * index + 0.75 },
+                      transition: { duration: 0.1 * index + 0.2 },
                     }}
                     style={{ opacity: 0, y: 20 }}
                   >
