@@ -25,6 +25,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+import { CharacterInfo } from '../components/CharacterInfo';
 import { DataModal } from '../components/DataModal';
 import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
@@ -41,12 +42,6 @@ import {
 } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
-const tagColors = {
-  Alive: 'green.500',
-  Dead: 'red.500',
-  unknown: 'gray.400',
-};
-
 export const Characters: React.FC = () => {
   const {
     heading,
@@ -56,7 +51,6 @@ export const Characters: React.FC = () => {
     title,
     text,
     span,
-    bodyBackground,
     linkColorHover,
   } = useThemeColors();
 
@@ -240,114 +234,7 @@ export const Characters: React.FC = () => {
 
           <TabPanels>
             <TabPanel p={0} mt={4}>
-              <Box position="relative">
-                <Image
-                  objectFit="cover"
-                  width="100%"
-                  borderRadius="md"
-                  src={selectedCharacter.image}
-                  alt={selectedCharacter.name}
-                  mb="4"
-                />
-                <Tag
-                  position="absolute"
-                  bg={buttonBg}
-                  color={buttonColor}
-                  fontWeight="extrabold"
-                  bottom={-2}
-                  right={-2}
-                  shadow="md"
-                  size="lg"
-                >
-                  #{selectedCharacter.id}
-                </Tag>
-              </Box>
-              <Box borderRadius="md" bg={bodyBackground} p={4} mb={3}>
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Species:{' '}
-                  <Text
-                    as="span"
-                    color={text}
-                    fontSize="lg"
-                    lineHeight={1}
-                    display="inline-block"
-                    fontWeight="normal"
-                  >
-                    {selectedCharacter.species}
-                  </Text>
-                </Text>
-
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Gender:{' '}
-                  <Text
-                    as="span"
-                    color={text}
-                    fontSize="lg"
-                    lineHeight={1}
-                    display="inline-block"
-                    fontWeight="normal"
-                  >
-                    {selectedCharacter.gender}
-                  </Text>
-                </Text>
-
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Type:{' '}
-                  <Text
-                    as="span"
-                    color={text}
-                    fontSize="lg"
-                    lineHeight={1}
-                    display="inline-block"
-                    fontWeight="normal"
-                  >
-                    {selectedCharacter.type ? selectedCharacter.type : '--'}
-                  </Text>
-                </Text>
-
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Origin:{' '}
-                  <Text
-                    as="span"
-                    color={text}
-                    fontSize="lg"
-                    lineHeight={1}
-                    display="inline-block"
-                    fontWeight="normal"
-                  >
-                    {selectedCharacter.origin
-                      ? selectedCharacter.origin.name
-                      : '--'}
-                  </Text>
-                </Text>
-
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Location:{' '}
-                  <Text
-                    as="span"
-                    color={text}
-                    fontSize="lg"
-                    lineHeight={1}
-                    display="inline-block"
-                    fontWeight="normal"
-                  >
-                    {selectedCharacter.location
-                      ? selectedCharacter.location.name
-                      : '--'}
-                  </Text>
-                </Text>
-
-                <Text fontWeight="bold" fontSize="lg" color={title}>
-                  Status:{' '}
-                  <Tag
-                    bg={tagColors[selectedCharacter.status]}
-                    color="white"
-                    fontWeight="extrabold"
-                  >
-                    {selectedCharacter.status}
-                  </Tag>
-                </Text>
-              </Box>
+              <CharacterInfo character={selectedCharacter} />
             </TabPanel>
             <TabPanel p={0} mt={4}>
               {episodesByIds.length > 0 ? (
