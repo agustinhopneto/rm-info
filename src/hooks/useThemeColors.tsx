@@ -44,8 +44,8 @@ export const ThemeColorsProvider: React.FC = ({ children }) => (
       linkColorHover: useColorModeValue('teal.400', 'teal.300'),
       shape: useColorModeValue('white', 'gray.800'),
       paginationText: useColorModeValue('gray.500', 'gray.500'),
-      paginationTextActive: useColorModeValue('gray.600', 'gray.300'),
-      paginationBgActive: useColorModeValue('gray.600', 'gray.300'),
+      paginationTextActive: useColorModeValue('gray.600', 'gray.400'),
+      paginationBgActive: useColorModeValue('gray.400', 'gray.600'),
     }}
   >
     {children}
