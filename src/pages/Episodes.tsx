@@ -23,6 +23,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+import { CharacterInfo } from '../components/CharacterInfo';
 import { DataModal } from '../components/DataModal';
 import { Empty } from '../components/Empty';
 import { ListPaginator } from '../components/ListPaginator';
@@ -31,7 +32,7 @@ import { MotionBox } from '../components/MotionBox';
 import { useCache } from '../hooks/useCache';
 import { useFetch } from '../hooks/useFetch';
 import { useThemeColors } from '../hooks/useThemeColors';
-import { Episode, EpisodeFilters } from '../utils/contants';
+import { Character, Episode, EpisodeFilters } from '../utils/contants';
 import { getIdsFromUrls, scrollToTop } from '../utils/functions';
 
 export const Episodes: React.FC = () => {
@@ -80,6 +81,8 @@ export const Episodes: React.FC = () => {
     defaultValues: defaultFilters,
   });
 
+  const [character, setCharacter] = useState<Character | null>(null);
+
   useEffect(() => {
     loadEpisodes(getValues(), page);
   }, [loadEpisodes, getValues, page]);
@@ -104,6 +107,15 @@ export const Episodes: React.FC = () => {
     },
     [onOpen, loadCharactersByIds],
   );
+
+  const handleSelectCharacter = useCallback((selectedCharacter: Character) => {
+    setCharacter(selectedCharacter);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    onClose();
+    setCharacter(null);
+  }, [onClose]);
 
   return (
     <>
@@ -208,7 +220,7 @@ export const Episodes: React.FC = () => {
       </DataModal>
       <DataModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         title={`${selectedEpisode.episode} - ${selectedEpisode.name}`}
       >
         <Tabs isFitted>
@@ -222,9 +234,18 @@ export const Episodes: React.FC = () => {
 
           <TabPanels>
             <TabPanel p={0} mt={4}>
-              {charactersByIds.length > 0 ? (
-                charactersByIds.map((character, index) => (
+              {character && (
+                <CharacterInfo
+                  character={character}
+                  handleGoBack={() => setCharacter(null)}
+                />
+              )}
+
+              {charactersByIds.length &&
+                !character &&
+                charactersByIds.map((char, index) => (
                   <MotionBox
+                    onClick={() => handleSelectCharacter(char)}
                     p={0}
                     animate={{
                       opacity: 1,
@@ -232,7 +253,7 @@ export const Episodes: React.FC = () => {
                       transition: { duration: 0.1 * index + 0.2 },
                     }}
                     style={{ opacity: 0, y: 20 }}
-                    key={character.id}
+                    key={char.id}
                   >
                     <Box
                       p={3}
@@ -253,28 +274,29 @@ export const Episodes: React.FC = () => {
                         width="100%"
                         maxWidth="80px"
                         borderRadius="md"
-                        src={character.image}
-                        alt={character.name}
+                        src={char.image}
+                        alt={char.name}
                         mr={4}
                       />
                       <div>
-                        <StatLabel color={title}>#{character.id}</StatLabel>
+                        <StatLabel color={title}>#{char.id}</StatLabel>
                         <StatNumber
                           color={title}
                           fontSize="lg"
                           lineHeight={1.2}
                           mb={1.5}
                         >
-                          {character.name}
+                          {char.name}
                         </StatNumber>
                         <StatHelpText m={0} color={text}>
-                          {character.species} / {character.gender}
+                          {char.species} / {char.gender}
                         </StatHelpText>
                       </div>
                     </Box>
                   </MotionBox>
-                ))
-              ) : (
+                ))}
+
+              {!charactersByIds.length && !character && (
                 <Empty title="This episode hasn't characters! :(" />
               )}
             </TabPanel>

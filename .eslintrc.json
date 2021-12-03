@@ -52,6 +52,7 @@
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
+    "react/require-default-props": "off",
     "import-helpers/order-imports": [
       "warn",
       {

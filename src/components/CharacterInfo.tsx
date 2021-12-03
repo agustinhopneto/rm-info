@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { Box, Image, Tag, Text } from '@chakra-ui/react';
+import { ChevronLeftIcon } from '@chakra-ui/icons';
+import { Box, IconButton, Image, Tag, Text } from '@chakra-ui/react';
 
 import { useThemeColors } from '../hooks/useThemeColors';
 import { Character } from '../utils/contants';
 
 type Props = {
   character: Character;
+  handleGoBack?: () => void;
 };
 
 const tagColors = {
@@ -15,12 +17,24 @@ const tagColors = {
   unknown: 'gray.400',
 };
 
-export const CharacterInfo: React.FC<Props> = ({ character }) => {
+export const CharacterInfo: React.FC<Props> = ({ character, handleGoBack }) => {
   const { buttonBg, buttonColor, bodyBackground, title, text } =
     useThemeColors();
 
   return (
     <>
+      {handleGoBack && (
+        <IconButton
+          mb={2}
+          onClick={handleGoBack}
+          variant="outline"
+          aria-label="Search database"
+          icon={<ChevronLeftIcon fontSize={24} />}
+          size="md"
+          color={buttonBg}
+          border={0}
+        />
+      )}
       <Box position="relative">
         <Image
           objectFit="cover"

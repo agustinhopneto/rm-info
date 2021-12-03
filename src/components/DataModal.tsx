@@ -67,10 +67,3 @@ export const DataModal: React.FC<Props> = ({
     </Modal>
   );
 };
-
-DataModal.defaultProps = {
-  actionButton: () => {
-    //
-  },
-  actionButtonTitle: '',
-};
